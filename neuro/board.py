@@ -17,3 +17,27 @@ class Board(object):
             return
         hex_.content=(token, token_orient)
 
+    def __iter__(self):
+        return iter(self.hexes)
+
+    def iter_occupied(self):
+        return OccupiedHexes(self)
+
+class OccupiedHexes(object):
+    def __init__(self, board):
+        self.board_hexes=board.hexes
+        self.index=0
+    
+    def __iter__(self):
+        return self
+        
+    def next(self):    
+        while not self.board_hexes[self.index].content:            
+            self.index += 1
+            if self.index > len(self.board_hexes) - 1:
+                raise StopIteration        
+        self.index += 1
+        if self.index > len(self.board_hexes) - 1:
+            raise StopIteration    
+        return self.board_hexes[self.index - 1]
+           

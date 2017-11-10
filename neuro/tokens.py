@@ -55,7 +55,8 @@ class UnitBuilder(object):
         self.name = None
         self.initiative = None
         self.hp = None
-        self.attacks = [None for i in range(6)]
+        self.attacks = []
+        self.init_segs = 1
 
     def set_hp(self, hp):
         self.hp = hp
@@ -63,12 +64,23 @@ class UnitBuilder(object):
     def set_initiative(self, initiative):
         self.initiative = initiative
 
-    def add_attack(self,is_range,multi):
-        pass
+    def add_attack(self, is_range, multi, dir):
+        self.attacks.append((is_range, multi, dir))
+        
+    def set_init_segs(self, n = 1):
+        self.init_segs = n
+
+    def build(self):
+        return Unit(self.hp, self.initiative, [(c, Attack(a, b)) for a, b, c in self.attacks])
 
 class Unit(object):
-    def __init__(self):
-        pass
+    def __init__(self, hp, init, attacks, init_segs = 1):
+        self.hp = hp
+        self.initiative = init
+        self.attacks = {}
+        self.init_segs = init_segs
+        for i in attacks:
+            self.attacks.setdefault(i[0], []).append(i[1])
 
 class Attack(object):
     def __init__(self, is_range, n):
