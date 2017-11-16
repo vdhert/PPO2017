@@ -35,13 +35,25 @@ class Board(object):
 
     def get_axis(self,n):
         return [self.hexes[self.hex_n[(x,y)]] for y in range(5) for x in range(5) if 1 < x + y < 7 and x + y == n + 2]
+    
+    @staticmethod
+    def _opt_rev(rev, lst):
+        if rev:
+            return list(reversed(lst))
+        else:
+            return lst
 
     def get_line_of_fire(self,hex_,dir_):
-        pass
-        #~ list_= optional_rev(dict_lines[dir_][0] , dict_lines[dir_][1](dict_lines[dir_][2]))
-        #~ h = 0
-        #~ while list_[h]!=hex_: h+=1
-        #~ return iter(list_[h+1:])
+        dict_args = {0 : hex_.y , 
+                      1 : hex_.x+hex_.y-2 , 
+                      2 : hex_.x , 
+                      3 : hex_.y ,
+                      4 : hex_.x+hex_.y-2 ,
+                      5 : hex_.x }
+        list_= self._opt_rev(self.dict_lines[dir_][0] , self.dict_lines[dir_][1](dict_args[dir_]))
+        h = 0
+        while list_[h]!=hex_: h+=1
+        return iter(list_[h+1:])
 
     def iter_occupied(self):
         return OccupiedHexes(self)
