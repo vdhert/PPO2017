@@ -41,10 +41,7 @@ class Board(object):
                 y = i.y
                 result += "\n"+str(i)
         return result
-    def __getitem__(self, coords):
-        #self.hexes
-        pass
-        
+
     def get_row(self,n):
         return [self.hexes[self.hex_n[(x,y)]] for x in range(5) for y in range(5) if 1 < x + y < 7 and x == n]
 

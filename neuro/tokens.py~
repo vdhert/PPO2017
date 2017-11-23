@@ -88,15 +88,12 @@ class BoardToken(Token):
 
     @classmethod
     def create(cls, army):
-        result = []
         tokens = getattr(army, cls.__name__.lower())
         for el in tokens:
             for key in el:
                 if "add" in key.__name__:
                     continue 
                 key(cls.builder, el[key])
-            result.append(cls.builder.build())
-        return result
 
     def __str__(self):
         return "%8s" % (self.name)
