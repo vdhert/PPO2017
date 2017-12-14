@@ -53,14 +53,6 @@ class Exec(Token):
 
     @staticmethod
     def create(army):
-#        if army.name == "Moloch":
-#            exectokens = {Battle: 4, Move: 1, Push: 5, Bomb:1}
-#        elif army.name == "Borgo":
-#            exectokens = {Battle: 6, Move: 4, Granate: 1}
-#        elif army.name == "Outpost":
-#            exectokens = {Battle: 6, Move: 7, Sniper: 1}
-#        elif army.name == "Hegemony":
-#            exectokens = {Battle: 5, Move: 3, Push: 2, Sniper: 1}
         return [Battle() for i in range(army.exectokens[Battle])]
 
     def execute(self):
@@ -130,8 +122,37 @@ class Army(object):
 
 class Moloch(Army):
     exectokens = {Battle: 4, Move: 1, Push: 5, Bomb:1}
-    unit = [{UnitBuilder.set_name: "Lowca", UnitBuilder.set_initiative: 3, UnitBuilder.add_attack: [(False, 1, x) for x in (0, 1, 3, 5)]},
-            {UnitBuilder.set_name: "Klaun", UnitBuilder.set_initiative: 2, UnitBuilder.add_attack: [(False, 1, 0),(False, 1, 5)], UnitBuilder.set_hp: 2}]
+    unit = [{UnitBuilder.set_name: "Lowca", UnitBuilder.set_initiative: 3, UnitBuilder.add_attack: [(False, 1, x) for x in (0, 1, 3, 5)], UnitBuilder.set_hp: 1},
+            {UnitBuilder.set_name: "Opancerzony_Wartownik", UnitBuilder.set_initiative: 2, UnitBuilder.add_attack: [(True, 1, 1),(True, 1, 5)]},
+            {UnitBuilder.set_name: "Klaun", UnitBuilder.add_attack: [(False, 1, 0),(False, 1, 5)], UnitBuilder.set_hp: 2},
+            {UnitBuilder.set_name: "Wartownik", UnitBuilder.add_attack: [(True, 1, 0),(True, 1, 5)]},
+            {UnitBuilder.set_name: "Dzialko_Gaussa", UnitBuilder.set_initiative: 1, UnitBuilder.add_attack: [(True, 1, 0)]},
+            {UnitBuilder.set_name: "Cyborg", UnitBuilder.set_initiative: 3, UnitBuilder.add_attack: [(True, 1, 0)], UnitBuilder.set_hp: 3}]
+
+
+class Borgo(Army):
+    exectokens = {Battle: 6, Move: 4, Granate: 1}
+    unit = [{UnitBuilder.set_name: "Mutek", UnitBuilder.set_initiative: 2,
+             UnitBuilder.add_attack: [(False, 1, x) for x in (0, 1, 5)]},
+            {UnitBuilder.set_name: "Nozownik", UnitBuilder.set_initiative: 3,
+             UnitBuilder.add_attack: [(False, 1, 0), (False, 1, 5)]},
+            {UnitBuilder.set_name: "Zabojca", UnitBuilder.set_initiative: 3,
+             UnitBuilder.add_attack: [(True, 1, 0)]}]
+
+
+class Posterunek(Army):
+    exectokens = {Battle: 6, Move: 7, Sniper: 1}
+    unit = [{UnitBuilder.set_name: "Komandos", UnitBuilder.set_initiative: 3, UnitBuilder.add_attack: [(False, 1, 0)]},
+            {UnitBuilder.set_name: "CKM", UnitBuilder.set_initiative: 1, UnitBuilder.init_segs = 2, UnitBuilder.add_attack: [(False, 1, 0)]},
+            ]
+
+
+class Hegemony(Army):
+    exectokens = {Battle: 5, Move: 3, Push: 2, Bomb:1}
+    unit = [{UnitBuilder.set_name: "Bydlak", UnitBuilder.set_initiative: 2, UnitBuilder.add_attack: [(False, 2, 0), (False, 1, 1), (False, 1, 5)]},
+            {UnitBuilder.set_name: "Uniwersalny Zolnierz", UnitBuilder.set_initiative: 3, UnitBuilder.add_attack: [(True, 1, 0),(False, 1, 0)]},
+            {UnitBuilder.set_name: "Straznik", UnitBuilder.set_initiative: 2, UnitBuilder.add_attack: [(False, 1, x) for x in (0, 1, 5)], UnitBuilder.set_hp: 2},
+            ]
 
 
 class Attack(object):
