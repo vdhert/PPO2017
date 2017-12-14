@@ -25,6 +25,9 @@ class UnitBuilder(object):
     def set_init_segs(self, n = 1):
         self.init_segs = n
 
+    def reset_attacks(self):
+        self.attacks = []
+
     def build(self):
         return Unit(self.name, self.hp, self.initiative, [(c, Attack(a, b)) for a, b, c in self.attacks])
 
@@ -96,6 +99,7 @@ class BoardToken(Token):
                     continue 
                 key(cls.builder, el[key])
             result.append(cls.builder.build())
+            cls.builder.reset_attacks()
         return result
 
     def __str__(self):
@@ -103,17 +107,6 @@ class BoardToken(Token):
 
 class Module(BoardToken):
     pass
-
-
-class Army(object):
-
-    def __init__(self, name):
-        self.name = name
-
-class Moloch(Army):
-    exectokens = {Battle: 4, Move: 1, Push: 5, Bomb:1}
-    unit = [{UnitBuilder.set_name: "Lowca", UnitBuilder.set_initiative: 3, UnitBuilder.add_attack: [(False, 1, x) for x in (0, 1, 3, 5)]},
-            {UnitBuilder.set_name: "Klaun", UnitBuilder.set_initiative: 2, UnitBuilder.add_attack: [(False, 1, 0),(False, 1, 5)], UnitBuilder.set_hp: 2}]
 
 
 class Unit(BoardToken):
@@ -129,6 +122,16 @@ class Unit(BoardToken):
         for i in attacks:
             self.attacks.setdefault(i[0], []).append(i[1])
 
+class Army(object):
+
+    def __init__(self, name):
+        self.name = name
+
+
+class Moloch(Army):
+    exectokens = {Battle: 4, Move: 1, Push: 5, Bomb:1}
+    unit = [{UnitBuilder.set_name: "Lowca", UnitBuilder.set_initiative: 3, UnitBuilder.add_attack: [(False, 1, x) for x in (0, 1, 3, 5)]},
+            {UnitBuilder.set_name: "Klaun", UnitBuilder.set_initiative: 2, UnitBuilder.add_attack: [(False, 1, 0),(False, 1, 5)], UnitBuilder.set_hp: 2}]
 
 
 class Attack(object):

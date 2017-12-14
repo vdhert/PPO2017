@@ -12,6 +12,8 @@ class Hex(object):
 
 class Board(object):
 
+    lens = [3, 4, 5, 4, 3]
+
     def __init__(self):
         self.hexes=[Hex(x, y, self) for x in range(5) for y in range(5) if 1 < x + y < 7]
         self.dict_lines = {0 : (True,  self.get_col),
@@ -41,17 +43,18 @@ class Board(object):
                 y = i.y
                 result += "\n"+str(i)
         return result
+
     def __getitem__(self, coords):
         #self.hexes
         pass
-        
-    def get_row(self,n):
-        return [self.hexes[self.hex_n[(x,y)]] for x in range(5) for y in range(5) if 1 < x + y < 7 and x == n]
 
-    def get_col(self,n):
-        return [self.hexes[self.hex_n[(x,y)]] for x in range(5) for y in range(5) if 1 < x + y < 7 and y == n]
+    def get_row(self, n):
+        return self.hexes[sum(self.lens[:n]): sum(self.lens[:n + 1])]
 
-    def get_axis(self,n):
+    def get_col(self, n):
+        return []
+
+    def get_axis(self, n):
         return [self.hexes[self.hex_n[(x,y)]] for y in range(5) for x in range(5) if 1 < x + y < 7 and x + y == n + 2]
     
     @staticmethod
@@ -61,16 +64,16 @@ class Board(object):
         else:
             return lst
 
-    def get_line_of_fire(self,hex_,dir_):
-        dict_args = {0 : hex_.y , 
-                      1 : hex_.x+hex_.y-2 , 
-                      2 : hex_.x , 
-                      3 : hex_.y ,
-                      4 : hex_.x+hex_.y-2 ,
-                      5 : hex_.x }
-        list_= self._opt_rev(self.dict_lines[dir_][0] , self.dict_lines[dir_][1](dict_args[dir_]))
+    def get_line_of_fire(self, hex_, dir_):
+        dict_args = {0: hex_.y,
+                     1: hex_.x + hex_.y - 2,
+                     2: hex_.x,
+                     3: hex_.y,
+                     4: hex_.x + hex_.y - 2,
+                     5: hex_.x}
+        list_= self._opt_rev(self.dict_lines[dir_][0], self.dict_lines[dir_][1](dict_args[dir_]))
         h = 0
-        while list_[h]!=hex_: h+=1
+        while list_[h] != hex_: h+=1
         return iter(list_[h+1:])
 
     def iter_occupied(self):
