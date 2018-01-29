@@ -19,8 +19,8 @@ class UnitBuilder(object):
     def set_initiative(self, initiative):
         self.initiative = initiative
 
-    def add_attack(self, is_range, multi, dir):
-        self.attacks.append((is_range, multi, dir))
+    def add_attack(self, is_range, multi, dir_):
+        self.attacks.append((is_range, multi, dir_))
         
     def set_init_segs(self, n = 1):
         self.init_segs = n
@@ -29,6 +29,7 @@ class UnitBuilder(object):
         self.attacks = []
 
     def build(self):
+        print 'build()', self.attacks
         return Unit(self.name, self.hp, self.initiative, [(c, Attack(a, b)) for a, b, c in self.attacks])
 
 
@@ -43,8 +44,8 @@ class Token(object):
     def create(self): pass
         
     def __repr__(self):
-        return "<{}>".format(type(self).__name__)
-        
+        return "<{0}>".format(type(self).__name__)
+
 
 class Exec(Token):
 
@@ -88,7 +89,12 @@ class BoardToken(Token):
         for el in tokens:
             for key in el:
                 if "add" in key.__name__:
-                    continue 
+#                    import pdb
+#                    pdb.set_trace()
+#                    continue 
+                    for att in el[key]:
+                        key(cls.builder, *att)
+                    continue
                 key(cls.builder, el[key])
             result.append(cls.builder.build())
             cls.builder.reset_attacks()
@@ -112,8 +118,26 @@ class Unit(BoardToken):
         self.attacks = {}
         self.init_segs = init_segs
         for i in attacks:
+            print 'sdjfgdjkss', i
             self.attacks.setdefault(i[0], []).append(i[1])
 
+    def attack(self, board, hex_):
+        print "Atak", self.attacks
+        for i, v in self.attacks.items():
+            print "Pierwsza petla"
+            lof = list(board.get_line_of_fire(hex_, (i+hex_.content[1]) % 6))
+            if not lof:
+                continue
+            for j in v:
+#                import pdb
+#                pdb.set_trace()
+                print self
+                if not j.is_range:
+                    print lof[0].content[0].hp
+                    lof[0].content[0].hp-=1 
+                    print lof[0].content[0].hp
+                else:
+                    print "NIEEEEE"
 class Army(object):
 
     def __init__(self, name):
@@ -143,7 +167,7 @@ class Borgo(Army):
 class Posterunek(Army):
     exectokens = {Battle: 6, Move: 7, Sniper: 1}
     unit = [{UnitBuilder.set_name: "Komandos", UnitBuilder.set_initiative: 3, UnitBuilder.add_attack: [(False, 1, 0)]},
-            {UnitBuilder.set_name: "CKM", UnitBuilder.set_initiative: 1, UnitBuilder.init_segs = 2, UnitBuilder.add_attack: [(False, 1, 0)]},
+            {UnitBuilder.set_name: "CKM", UnitBuilder.set_initiative: 1, UnitBuilder.set_init_segs: 2, UnitBuilder.add_attack: [(False, 1, 0)]},
             ]
 
 

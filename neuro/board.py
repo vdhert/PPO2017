@@ -7,7 +7,7 @@ class Hex(object):
 
     def __str__(self):
         if self.content:
-            return "[%s|%i]"%(str(self.content[0]),self.content[1])
+            return "[%s|%i]"%(str(self.content[0])[:8], self.content[1])
         return "["+" "*10+"]"
 
 class Board(object):
@@ -34,14 +34,17 @@ class Board(object):
         return iter(self.hexes)
     
     def __str__(self):
-        result = ""
-        y = 0
-        for i in self.hexes:
-            if y == i.y:
-                result += str(i)
-            else:
-                y = i.y
-                result += "\n"+str(i)
+        k = 0
+        result = ''
+        lpk = (3, 4, 5, 4, 3)
+        spk = (2, 1, 0, 1, 2)
+        pcpk = (1, 1, 0, 0, 0) 
+        for lp, lsp, pcp in zip(lpk, spk, pcpk):
+            blind = ' ' * 12 * lsp
+            fields = ''.join(map(str, self.hexes[k : (k + lp)]))
+            if pcp: result += blind + fields + '\n'
+            else: result += fields + blind + '\n'
+            k += lp
         return result
 
     def __getitem__(self, coords):

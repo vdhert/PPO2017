@@ -7,10 +7,12 @@ class Hex(object):
 
     def __str__(self):
         if self.content:
-            return "[%s|%i]"%(str(self.content[0]),self.content[1])
+            return "[%s|%i]"%(str(self.content[0])[:8],self.content[1])
         return "["+" "*10+"]"
 
 class Board(object):
+
+    lens = [3, 4, 5, 4, 3]
 
     def __init__(self):
         self.hexes=[Hex(x, y, self) for x in range(5) for y in range(5) if 1 < x + y < 7]
@@ -32,23 +34,30 @@ class Board(object):
         return iter(self.hexes)
     
     def __str__(self):
-        result = ""
-        y = 0
-        for i in self.hexes:
-            if y == i.y:
-                result += str(i)
-            else:
-                y = i.y
-                result += "\n"+str(i)
+        k = 0
+        result = ''
+        lpk = (3, 4, 5, 4, 3)
+        spk = (2, 1, 0, 1, 2)
+        pcpk = (1, 1, 0, 0, 0) 
+        for lp, lsp, pcp in zip(lpk, spk, pcpk):
+            blind = ' ' * 12 * lsp
+            fields = ''.join(map(str, self.hexes[k : (k + lp)]))
+            if pcp: result += blind + fields + '\n'
+            else: result += fields + blind + '\n'
+            k += lp
         return result
 
-    def get_row(self,n):
-        return [self.hexes[self.hex_n[(x,y)]] for x in range(5) for y in range(5) if 1 < x + y < 7 and x == n]
+    def __getitem__(self, coords):
+        #self.hexes
+        pass
 
-    def get_col(self,n):
-        return [self.hexes[self.hex_n[(x,y)]] for x in range(5) for y in range(5) if 1 < x + y < 7 and y == n]
+    def get_row(self, n):
+        return self.hexes[sum(self.lens[:n]): sum(self.lens[:n + 1])]
 
-    def get_axis(self,n):
+    def get_col(self, n):
+        return []
+
+    def get_axis(self, n):
         return [self.hexes[self.hex_n[(x,y)]] for y in range(5) for x in range(5) if 1 < x + y < 7 and x + y == n + 2]
     
     @staticmethod
@@ -58,16 +67,16 @@ class Board(object):
         else:
             return lst
 
-    def get_line_of_fire(self,hex_,dir_):
-        dict_args = {0 : hex_.y , 
-                      1 : hex_.x+hex_.y-2 , 
-                      2 : hex_.x , 
-                      3 : hex_.y ,
-                      4 : hex_.x+hex_.y-2 ,
-                      5 : hex_.x }
-        list_= self._opt_rev(self.dict_lines[dir_][0] , self.dict_lines[dir_][1](dict_args[dir_]))
+    def get_line_of_fire(self, hex_, dir_):
+        dict_args = {0: hex_.y,
+                     1: hex_.x + hex_.y - 2,
+                     2: hex_.x,
+                     3: hex_.y,
+                     4: hex_.x + hex_.y - 2,
+                     5: hex_.x}
+        list_= self._opt_rev(self.dict_lines[dir_][0], self.dict_lines[dir_][1](dict_args[dir_]))
         h = 0
-        while list_[h]!=hex_: h+=1
+        while list_[h] != hex_: h+=1
         return iter(list_[h+1:])
 
     def iter_occupied(self):
